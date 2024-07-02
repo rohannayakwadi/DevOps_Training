@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+    environment {
+                DOCKER_CRED = credentials('rohan4494')
+            }
+            
+    stages {
+        stage('Build image') {
+            steps {
+                    sh 'docker build -t rohan4494/todo-app:${BUILD_ID} .'
+                    sh 'docker images'
+                }
+        }
+
+        stage('Push Docker hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-rohan4494', usernameVariable: 'DOCKER_CRED_USR', passwordVariable: 'DOCKER_CRED_PSW')]) { 
+                    sh 'docker login -u ${DOCKER_CRED_USR} -p ${DOCKER_CRED_PSW}' 
+                    sh 'docker push rohan4494/todo-app:${BUILD_ID}' }
+                }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                script {
+                    def gitClone = 'git clone https://github.com/yunandarz/todo-app.git'
+                    def dockerPull = 'docker pull rohan4494/todo-app'
+                    def dockerComposeDown = 'docker compose down --volumes'
+                    def deleteImages = 'docker image prune -a --force'
+                    def dockerComposeUp = 'docker compose -f docker-compose.yaml up -d'
+                   
+                }
+            }
+        }
+
+        
+    }
+    post {
+        always {
+                sh 'docker image prune -a --force' 
+        }
+    }
+}
