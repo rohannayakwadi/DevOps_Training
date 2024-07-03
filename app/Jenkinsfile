@@ -10,6 +10,7 @@ pipeline {
         stage('Build image') {
             steps {
                     sh 'ls -lart'
+                    sh 'cd app'
                     sh 'docker build -t rohan4494/todo-app:${BUILD_ID} .'
                     sh 'docker images'
                 }
