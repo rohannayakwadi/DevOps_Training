@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'Jenkins-Demo-Agent'
+    }
     // environment {
     //             DOCKER_CRED = credentials('rohan4494')
     //         }
