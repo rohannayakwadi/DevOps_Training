@@ -9,11 +9,13 @@ pipeline {
     stages {
         stage('Build image') {
             steps {
+               dir('app') {
                     sh 'ls -lart'
-                    sh 'cd app/'
+                    sh 'pwd'
                     sh 'docker build -t rohan4494/todo-app:${BUILD_ID} .'
                     sh 'docker images'
-                }
+               }
+            }
         }
 
         // stage('Push Docker hub') {
@@ -27,11 +29,15 @@ pipeline {
         stage('Deploy to Server') {
             steps {
                 script {
-                    def gitClone = 'git clone https://github.com/yunandarz/todo-app.git'
-                    def dockerPull = 'docker pull rohan4494/todo-app'
-                    def dockerComposeDown = 'docker compose down --volumes'
-                    def deleteImages = 'docker image prune -a --force'
-                    def dockerComposeUp = 'docker compose -f docker-compose.yaml up -d'
+                    dir('app') {
+                        sh 'docker compose -f docker-compose.yaml up -d'
+                        sh 'docker ps'
+                    // def gitClone = 'git clone https://github.com/yunandarz/todo-app.git'
+                    // def dockerPull = 'docker pull rohan4494/todo-app'
+                    // def dockerComposeDown = 'docker compose down --volumes'
+                    // def deleteImages = 'docker image prune -a --force'
+                    // def dockerComposeUp = 'docker compose -f docker-compose.yaml up -d'
+                    }
                    
                 }
             }
